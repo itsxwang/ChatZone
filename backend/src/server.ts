@@ -5,6 +5,8 @@ import dotenv from 'dotenv'
 import authRoutes from './routes/auth.route'
 import messageRoutes from './routes/message.route'
 import path from 'path'
+import { connectDB } from './lib/db'
+
 
 dotenv.config()
 
@@ -26,13 +28,18 @@ const rootDir = path.resolve()
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(rootDir, "../frontend/dist")))
 
-    // Serve index.html for any unmatched route (allow SPA routing). Using app.use to avoid
-    // path parsing issues with path-to-regexp when using wildcard route strings.
+    // Serve index.html for any unmatched route (allow SPA routing).
     app.get("/", (_, res) => {
         res.sendFile(path.resolve(rootDir, "../frontend", "dist", "index.html"))
     })
 }
 
-app.listen(PORT, () => {
-    console.log(`Server started on port http://localhost:${PORT}`)
+
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server started on port http://localhost:${PORT}`);
+    })
+}).catch((error) => {
+    console.error('MongoDB connection error:', error);
+    process.exit(1); // 1 status code means failure, 0 for success
 })
