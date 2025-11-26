@@ -35,11 +35,24 @@ if (process.env.NODE_ENV === "production") {
 }
 
 
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server started on port http://localhost:${PORT}`);
-    })
-}).catch((error) => {
-    console.error('MongoDB connection error:', error);
-    process.exit(1); // 1 status code means failure, 0 for success
-})
+// Vercel serverless: connect DB at cold start
+let dbReady = false;
+async function ensureDB() {
+    if (!dbReady) {
+        try {
+            await connectDB();
+            dbReady = true;
+        } catch (error) {
+            console.error('MongoDB connection error:', error);
+        }
+    }
+}
+
+// Vercel serverless export
+import { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default async function handler(req: Request | VercelRequest, res: Response | VercelResponse) {
+    await ensureDB();
+    app(req as any, res as any);
+}
