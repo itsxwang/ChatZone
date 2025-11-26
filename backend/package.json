@@ -5,11 +5,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon",
-    "build": "tsc",
-    "start": "node dist/server.js"
-  },
+  "dev": "nodemon",
+  "build": "tsc && npm run build:frontend",
+  "build:frontend": "cd ../frontend && npm install && npm run build",
+  "start": "node dist/server.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
