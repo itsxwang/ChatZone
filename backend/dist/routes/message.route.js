@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 router.get('/send', (req, res) => {
-    res.send('S Message endpoint');
+    res.send('Send Message endpoint');
 });
 router.get('/receive', (req, res) => {
-    res.send('R Message endpoint');
+    res.send('Receive Message endpoint');
 });
 exports.default = router;
