@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import { generateToken } from '../lib/utils';
 import User from '../models/User';
 import bcrypt from 'bcryptjs';
+import { sendWelcomeEmail } from '../emails/emailHandlers';
 
 export const signup = async (req: Request, res: Response) => {
   // Signup logic here
@@ -38,6 +39,7 @@ export const signup = async (req: Request, res: Response) => {
     else {
       await newUser.save();
       generateToken(newUser._id.toString(), res);
+      await sendWelcomeEmail(newUser.fullName, newUser.email, process.env.CLIENT_URL || "");
       res.status(201).json({ _id: newUser._id, fullName: newUser.fullName, email: newUser.email, profilePic: newUser.profilePic });
     }
 

@@ -5,11 +5,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-  "dev": "nodemon",
-  "build": "tsc && npm run build:frontend",
-  "build:frontend": "cd ../frontend && npm install && npm run build",
-  "start": "node dist/server.js"
-},
+    "dev": "nodemon",
+    "build": "tsc && npm run build:frontend",
+    "build:frontend": "cd ../frontend && npm install && npm run build",
+    "start": "node dist/server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -22,7 +22,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.2"
+    "mongoose": "^8.19.2",
+    "nodemailer": "^7.0.11"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -31,6 +32,7 @@
     "@types/node": "^24.9.1",
     "nodemon": "^3.1.10",
     "ts-node-dev": "^2.0.0",
+    "@types/nodemailer": "^7.0.4",
     "typescript": "^5.9.3"
   }
 }
