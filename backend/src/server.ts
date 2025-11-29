@@ -1,27 +1,28 @@
 import express from "express";
-// import { type Request, type Response } from 'express';
 import cors from "cors";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route";
 import messageRoutes from "./routes/message.route";
 import path from "path";
 import { connectDB } from "./lib/db";
+import cookieParser from "cookie-parser";
+import { ENV } from "./lib/env";
 
-dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 
-const PORT = process.env.PORT || 3000;
+const PORT = ENV.PORT || 3000;
 
 const rootDir = path.resolve();
 
-if (process.env.NODE_ENV === "production") {
+if (ENV.NODE_ENV === "production" || ENV.NODE_ENV === "development") {
 
     app.use(express.static(path.join(rootDir, "../frontend/dist")));
 

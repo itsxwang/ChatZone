@@ -1,9 +1,6 @@
 import transporter from "../lib/nodemailer";
 import { createWelcomeEmailTemplate } from "./emailTemplates";
-import dotenv from "dotenv";
-
-dotenv.config();
-
+import { ENV } from "../lib/env";
 export async function sendWelcomeEmail(
   name: string,
   email: string,
@@ -11,11 +8,11 @@ export async function sendWelcomeEmail(
 ) {
     
   await transporter.sendMail({
-    from: `"ChatZone" <${process.env.GMAIL_USER}>`,
+    from: `"ChatZone" <${ENV.GMAIL_USER}>`,
     to: email,
     subject: `Welcome to ChatZone`,
     html: createWelcomeEmailTemplate(name, clientURL),
-    replyTo: process.env.GMAIL_USER,
+    replyTo: ENV.GMAIL_USER,
   });
 
 

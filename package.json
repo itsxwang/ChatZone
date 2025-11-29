@@ -5,7 +5,7 @@
   "engines": {
     "node": ">=20.0.0"
   },
-   "scripts": {
+  "scripts": {
     "build": "npm install --prefix backend && npm run build --prefix backend",
     "start": "npm run start --prefix backend"
   },
@@ -15,5 +15,9 @@
   "description": "",
   "devDependencies": {
     "@vercel/node": "^5.5.12"
+  },
+  "dependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "cookie-parser": "^1.4.7"
   }
 }
