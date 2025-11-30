@@ -1,38 +1,43 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import {ENV} from '../lib/env'; 
+import { ENV } from '../lib/env';
 import User from '../models/User';
 
+export interface IUser {
+  id: string;
+  fullName: string;
+  email: string;
+  profilePic?: string;
+}
+
 declare global {
-    namespace Express {
-        interface Request {
-            user?: { id: string };
-        }
+  namespace Express {
+    interface Request {
+      user?: IUser;
     }
+  }
 }
 
 export const protectRoute = async (req: Request, res: Response, next: NextFunction) => {
-
-    try {
+  try {
     const token = req.cookies.jwt;
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: No token provided' });
-        
-    }
-    const decoded = jwt.verify(token, ENV.JWT_SECRET || 'defaultsecret') as { id: string };
-    if (!decoded) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid token' });
-    }
+    if (!token) return res.status(401).json({ message: 'No token' });
 
-    const user = await User.findById(decoded.id);
-    if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-    }
+    const decoded = jwt.verify(token, ENV.JWT_SECRET!) as { id: string };
 
-    req.user = decoded;
+    const userDoc = await User.findById(decoded.id).select('-password');
+    if (!userDoc) return res.status(404).json({ message: 'User not found' });
+
+    req.user = {
+      id: userDoc.id,
+      fullName: userDoc.fullName,
+      email: userDoc.email,
+      profilePic: userDoc.profilePic || undefined,
+    };
+
     next();
-    } catch (error) {
-        console.error("err: ", error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-}
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-const PORT = ENV.PORT || 3000;
+const PORT = ENV.PORT || 3001;
 
 const rootDir = path.resolve();
 
