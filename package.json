@@ -15,9 +15,5 @@
   "description": "",
   "devDependencies": {
     "@vercel/node": "^5.5.12"
-  },
-  "dependencies": {
-    "@types/cookie-parser": "^1.4.10",
-    "cookie-parser": "^1.4.7"
   }
 }
