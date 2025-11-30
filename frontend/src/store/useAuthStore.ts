@@ -23,19 +23,39 @@ export const useAuthStore = create((set) => ({
     }
   },
 
- signup: async (data: { fullName: string; email: string; password: string }) => {
-  set({ isSigningUp: true });
+  signup: async (data: {
+    fullName: string;
+    email: string;
+    password: string;
+  }) => {
+    set({ isSigningUp: true });
 
-  try {
-    const res = await axiosInstance.post("/auth/signup", data);
-    set({ authUser: res.data });
+    try {
+      const res = await axiosInstance.post("/auth/signup", data);
+      set({ authUser: res.data });
 
-    toast.success("Account created successfully!");
-  } catch (err) {
-    const error = err as AxiosError<{ message: string }>;
-    toast.error(error.response?.data?.message || "Signup failed");
-  } finally {
-    set({ isSigningUp: false });
-  }
-},
+      toast.success("Account created successfully!");
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      toast.error(error.response?.data?.message || "Signup failed");
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
+
+  login: async (data: { email: string; password: string }) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      set({ authUser: res.data });
+
+      toast.success("Logged in successfully");
+
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      toast.error(error.response?.data?.message || "Login failed");
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
 }));
