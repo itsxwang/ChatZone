@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 
 interface AuthUser {
-  id: string;
+  _id: string;
   fullName: string;
   email: string;
   profilePic?: string;
@@ -38,7 +38,6 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-      console.log(res.data);
       set({ authUser: res.data });
     } catch (error) {
       console.log("Error in authCheck:", error);

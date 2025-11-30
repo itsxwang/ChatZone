@@ -4,7 +4,7 @@ import Message from "../models/Message";
 import cloudinary from "../lib/cloudinary";
 export async function getAllContacts(req: Request, res: Response) {
   try {
-    const loggedInUserId = req.user?.id;
+    const loggedInUserId = req.user?._id;
     const filterdUsers = await User.find({
       _id: { $ne: loggedInUserId },
     }).select("-password");
@@ -17,7 +17,7 @@ export async function getAllContacts(req: Request, res: Response) {
 
 export async function getMessagesByUserId(req: Request, res: Response) {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?._id;
     const { id: userToChatId } = req.params;
     const myId = userId!;
 
@@ -38,7 +38,7 @@ export async function sendMessage(req: Request, res: Response) {
   try {
     const { text, image } = req.body;
     const { id: receiverId } = req.params;
-    const senderId = req.user?.id;
+    const senderId = req.user?._id;
 
     if (!text && !image) {
       return res.status(400).json({ message: "Text or image is required." });
@@ -73,7 +73,7 @@ export async function sendMessage(req: Request, res: Response) {
 
 export async function getChatPartners(req: Request, res: Response) {
   try {
-    const loggedInUserId = req.user?.id;
+    const loggedInUserId = req.user?._id;
 
     // find all the messages where the logged-in user is either sender or receiver
     const messages = await Message.find({

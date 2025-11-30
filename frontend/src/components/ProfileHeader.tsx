@@ -30,7 +30,6 @@ function ProfileHeader() {
       await updateProfile({ profilePic: base64Image as string });
     };
   };
-  console.log("Rendered ProfileHeader", authUser);
 
   return (
     <div className="p-6 border-b border-slate-700/50">

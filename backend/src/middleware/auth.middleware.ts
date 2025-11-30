@@ -4,7 +4,7 @@ import { ENV } from '../lib/env';
 import User from '../models/User';
 
 export interface IUser {
-  id: string;
+  _id: string;
   fullName: string;
   email: string;
   profilePic?: string;
@@ -29,7 +29,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
     if (!userDoc) return res.status(404).json({ message: 'User not found' });
 
     req.user = {
-      id: userDoc.id,
+      _id: userDoc.id,
       fullName: userDoc.fullName,
       email: userDoc.email,
       profilePic: userDoc.profilePic || undefined,
