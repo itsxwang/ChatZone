@@ -23,9 +23,9 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
     const token = req.cookies.jwt;
     if (!token) return res.status(401).json({ message: 'No token' });
 
-    const decoded = jwt.verify(token, ENV.JWT_SECRET!) as { id: string };
+    const decoded = jwt.verify(token, ENV.JWT_SECRET!) as { userId: string };
 
-    const userDoc = await User.findById(decoded.id).select('-password');
+    const userDoc = await User.findById(decoded.userId).select('-password');
     if (!userDoc) return res.status(404).json({ message: 'User not found' });
 
     req.user = {

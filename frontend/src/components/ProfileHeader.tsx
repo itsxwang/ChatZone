@@ -4,7 +4,6 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
 const mouseClickSound = new Audio("/sounds/mouse-click.mp3");
-
 function ProfileHeader() {
   const { logout, authUser, updateProfile } = useAuthStore() as {
     logout: () => void;
