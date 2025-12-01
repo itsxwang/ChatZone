@@ -12,7 +12,7 @@ function App() {
   const { checkAuth, isCheckingAuth, authUser } = useAuthStore() as {
     checkAuth: () => Promise<void>;
     isCheckingAuth: boolean;
-    authUser:   { id: string; fullName: string; email: string; profilePic: string };
+    authUser:   { id: string; fullName: string; email: string; profilePic: string } | null;
   };
 
   useEffect(() => {
