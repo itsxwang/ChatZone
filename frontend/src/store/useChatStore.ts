@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { useAuthStore } from "./useAuthStore";
 import type { AxiosError } from "axios";
 
 // Define types for the state
@@ -14,12 +15,12 @@ interface ChatStoreState {
   chats: { _id: string; fullName: string; email: string; profilePic: string }[];
   messages: {
     _id: string;
-    senderId: string;
-    receiverId: string;
+    senderId?: string ;
+    receiverId?: string;
     text?: string;
     image?: string;
     createdAt: string;
-    updatedAt: string;
+    updatedAt?: string;
   }[];
   activeTab: string;
   selectedUser: null | {
@@ -44,6 +45,10 @@ interface ChatStoreState {
   getMyChatPartners: () => Promise<void>;
   getMessagesByUserId: (userId: string) => Promise<void>;
   getAllContacts: () => Promise<void>;
+  sendMessage: (messageData: {
+    text?: string;
+    image?: string;
+  }) => Promise<void>;
 }
 
 // Helper: safely get boolean from localStorage
@@ -61,7 +66,6 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
   isSoundEnabled: getInitialSoundState(),
-  
 
   toggleSound: () => {
     const newValue = !get().isSoundEnabled;
@@ -115,6 +119,40 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       toast.error(err.response?.data?.message || "Something went wrong");
     } finally {
       set({ isMessagesLoading: false });
+    }
+  },
+
+  sendMessage: async (messageData: { text?: string; image?: string }) => {
+    const { selectedUser, messages } = get();
+
+    const { authUser } = useAuthStore.getState();
+
+    const tempId = `temp-${Date.now()}`;
+
+    const optimisticMessage = {
+      _id: tempId,
+      senderId: authUser?._id,
+      receiverId: selectedUser?._id,
+      text: messageData.text,
+      image: messageData.image,
+      createdAt: new Date().toISOString(),
+      isOptimistic: true, // flag to identify optimistic messages (optional)
+    };  
+    // optimistically updating UI instantly
+    set({ messages: [optimisticMessage, ...messages] });
+
+    try {
+      const res = await axiosInstance.post(
+        `/messages/send/${selectedUser?._id}`,
+        messageData
+      );
+      set({ messages: messages.concat(res.data) });
+    } catch (error) {
+      // remove optimistic message on failure
+      set({ messages: messages });
+
+      const err = error as AxiosError<{ message: string }>;
+      toast.error(err.response?.data?.message || "Something went wrong");
     }
   },
 }));
