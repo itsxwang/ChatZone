@@ -15,7 +15,7 @@ interface ChatStoreState {
   chats: { _id: string; fullName: string; email: string; profilePic: string }[];
   messages: {
     _id: string;
-    senderId?: string ;
+    senderId?: string;
     receiverId?: string;
     text?: string;
     image?: string;
@@ -49,6 +49,9 @@ interface ChatStoreState {
     text?: string;
     image?: string;
   }) => Promise<void>;
+  subscribeToMessages: () => void;
+  unsubscribeFromMessages: () => void;
+
 }
 
 // Helper: safely get boolean from localStorage
@@ -137,7 +140,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       image: messageData.image,
       createdAt: new Date().toISOString(),
       isOptimistic: true, // flag to identify optimistic messages (optional)
-    };  
+    };
     // optimistically updating UI instantly
     set({ messages: [optimisticMessage, ...messages] });
 
@@ -154,5 +157,35 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || "Something went wrong");
     }
+  },
+
+  subscribeToMessages: () => {
+    const { selectedUser, isSoundEnabled } = get();
+    if (!selectedUser) return;
+
+    const socket = useAuthStore.getState().socket;
+
+    socket?.on("newMessage", (newMessage) => {
+      const isMessageSentFromSelectedUser =
+        newMessage.senderId === selectedUser._id;
+      if (!isMessageSentFromSelectedUser) return;
+
+      const currentMessages = get().messages;
+      set({ messages: [...currentMessages, newMessage] });
+
+      if (isSoundEnabled) {
+        const notificationSound = new Audio("/sounds/notification.mp3");
+
+        notificationSound.currentTime = 0; // reset to start
+        notificationSound
+          .play()
+          .catch((e) => console.log("Audio play failed:", e));
+      }
+    });
+  },
+
+  unsubscribeFromMessages: () => {
+    const socket = useAuthStore.getState().socket;
+    socket?.off("newMessage");
   },
 }));
